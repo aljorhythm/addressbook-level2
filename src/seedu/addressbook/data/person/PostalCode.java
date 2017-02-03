@@ -1,5 +1,11 @@
 package seedu.addressbook.data.person;
 
+/**
+ * 
+ * @author joellim
+ * Postal Code part of an address
+ */
+
 public class PostalCode {
     private String postalCode;
 
