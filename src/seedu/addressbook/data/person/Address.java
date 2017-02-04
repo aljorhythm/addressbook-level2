@@ -8,15 +8,19 @@ import seedu.addressbook.data.exception.IllegalValueException;
  */
 public class Address {
 
-    public static final String EXAMPLE = "123, some street";
-    public static final String MESSAGE_ADDRESS_CONSTRAINTS = "Person addresses can be in any format";
-    public static final String ADDRESS_VALIDATION_REGEX = ".+"; // TODO test regex  ^a\/([^,]+,){1-3}\d*
+    public static final String EXAMPLE = "[block], street, [unit], postal_code";
+    public static final String MESSAGE_ADDRESS_CONSTRAINTS = "Person addresses must be in the format '" + EXAMPLE +"'";
+    public static final String ADDRESS_VALIDATION_REGEX = "^[^,]*(, [^,]*){3}$";
 
     private boolean isPrivate;
     private Block block;
     private Street street;
     private Unit unit;
     private PostalCode postalCode;
+
+    private static class AddressCSVIndices {
+        static int BLOCK = 0, STREET = 1, UNIT = 2, POSTAL_CODE = 3;
+    }
 
     /**
      * Validates given address.
@@ -25,16 +29,16 @@ public class Address {
      *             if given address string is invalid.
      */
     public Address(String address, boolean isPrivate) throws IllegalValueException {
-        String trimmedAddress = address.trim();
+        address = address.trim();
         this.isPrivate = isPrivate;
-        if (!isValidAddress(trimmedAddress)) {
+        if (!isValidAddress(address)) {
             throw new IllegalValueException(MESSAGE_ADDRESS_CONSTRAINTS);
         }
-        String[] addressParts = trimmedAddress.split(", ");
-        this.block = new Block(addressParts[0]);
-        this.street = new Street(addressParts[1]);
-        this.unit = new Unit(addressParts.length > 2 ? addressParts[2] : "");
-        this.postalCode = new PostalCode(addressParts.length > 3 ? addressParts[3] : "");
+        String[] addressParts = address.split(", ");
+        this.block = new Block(addressParts[AddressCSVIndices.BLOCK]);
+        this.street = new Street(addressParts.length > 1 ? addressParts[AddressCSVIndices.STREET] : "");
+        this.unit = new Unit(addressParts.length > 2 ? addressParts[AddressCSVIndices.UNIT] : "");
+        this.postalCode = new PostalCode(addressParts.length > 3 ? addressParts[AddressCSVIndices.POSTAL_CODE] : "");
     }
 
     /**
@@ -44,28 +48,22 @@ public class Address {
         return test.matches(ADDRESS_VALIDATION_REGEX);
     }
 
+    /**
+     * @return String representation of address
+     */
     @Override
     public String toString() {
-        String[] addressParts = new String[] { block.toString(), street.toString(), unit.toString(), postalCode.toString() };
-        String ret = "";
-        for(int i = 0; i < addressParts.length; i++){
-            String part = addressParts[i];
-            if(!part.equals("")){
-                if(!ret.equals("")){
-                    ret += ", ";
-                }
-                ret += part;
-            };
-        }
-        return ret;
+        String[] addressParts = new String[] { block.toString(), street.toString(), unit.toString(),
+                postalCode.toString() };
+        return String.join(", ", addressParts);
     }
-
+    
     @Override
     public boolean equals(Object other) {
         return other == this // short circuit if same object
                 || (other instanceof Address // instanceof handles nulls
                         && this.toString().equals(((Address) other).toString())); // state
-                                                                                  // check
+        // check
     }
 
     @Override
