@@ -17,34 +17,23 @@ import java.util.Scanner;
  */
 public class TextUi {
 
-    /** A decorative prefix added to the beginning of lines printed by AddressBook */
-    private static final String LINE_PREFIX = "|| ";
-
-    /** A platform independent line separator. */
-    private static final String LS = System.lineSeparator();
-
-    private static final String DIVIDER = "===================================================";
-
-    /** Format of indexed list item */
-    private static final String MESSAGE_INDEXED_LIST_ITEM = "\t%1$d. %2$s";
-
-
-    /** Offset required to convert between 1-indexing and 0-indexing.  */
-    public static final int DISPLAYED_INDEX_OFFSET = 1;
-
     /** Format of a comment input line. Comment lines are silently consumed when reading user input. */
     private static final String COMMENT_LINE_FORMAT_REGEX = "#.*";
 
+    public static final int DISPLAYED_INDEX_OFFSET = 1;
+
     private final Scanner in;
     private final PrintStream out;
+    private OutputFormatter outFormatter;
 
     public TextUi() {
-        this(System.in, System.out);
+        this(System.in, System.out, new StandardFormatter());
     }
 
-    public TextUi(InputStream in, PrintStream out) {
+    public TextUi(InputStream in, PrintStream out, OutputFormatter outFormatter) {
         this.in = new Scanner(in);
         this.out = out;
+        this.outFormatter = outFormatter;
     }
 
     /**
@@ -75,7 +64,7 @@ public class TextUi {
      * @return command (full line) entered by the user
      */
     public String getUserCommand() {
-        out.print(LINE_PREFIX + "Enter command: ");
+        out.print(outFormatter.formatLine("Enter command: "));
         String fullInputLine = in.nextLine();
 
         // silently consume all ignored lines
@@ -83,37 +72,46 @@ public class TextUi {
             fullInputLine = in.nextLine();
         }
 
-        showToUser("[Command entered:" + fullInputLine + "]");
+        showToUserFormatted("[Command entered:" + fullInputLine + "]");
         return fullInputLine;
     }
 
-
     public void showWelcomeMessage(String version, String storageFilePath) {
         String storageFileInfo = String.format(MESSAGE_USING_STORAGE_FILE, storageFilePath);
-        showToUser(
-                DIVIDER,
-                DIVIDER,
-                MESSAGE_WELCOME,
-                version,
-                MESSAGE_PROGRAM_LAUNCH_ARGS_USAGE,
-                storageFileInfo,
-                DIVIDER);
+        showToUser(outFormatter.formatLinesWithDividers(2, 1, MESSAGE_WELCOME, version,
+                MESSAGE_PROGRAM_LAUNCH_ARGS_USAGE, storageFileInfo));
+    }
+
+    public static void main(String[] args) {
+        new TextUi().showToUser("hello", "abs");
+        new TextUi().showWelcomeMessage("123", "something");
     }
 
     public void showGoodbyeMessage() {
-        showToUser(MESSAGE_GOODBYE, DIVIDER, DIVIDER);
+        showToUser(outFormatter.formatLinesWithDividers(0, 2, MESSAGE_GOODBYE));
     }
-
 
     public void showInitFailedMessage() {
-        showToUser(MESSAGE_INIT_FAILED, DIVIDER, DIVIDER);
+        showToUser(outFormatter.formatLinesWithDividers(0, 2, MESSAGE_INIT_FAILED));
     }
 
-    /** Shows message(s) to the user */
+    /**
+     * Shows message as-is to user 
+     */
+    public void showToUser(String message) {
+        out.println(message);
+    }
+
+    /**
+     * Shows formatted message to user 
+     */
+    public void showToUserFormatted(String message) {
+        out.println(outFormatter.formatLine(message));
+    }
+
+    /** Formats and shows message(s) to the user */
     public void showToUser(String... message) {
-        for (String m : message) {
-            out.println(LINE_PREFIX + m.replace("\n", LS + LINE_PREFIX));
-        }
+        out.println(outFormatter.formatLines(message));
     }
 
     /**
@@ -125,7 +123,7 @@ public class TextUi {
         if (resultPersons.isPresent()) {
             showPersonListView(resultPersons.get());
         }
-        showToUser(result.feedbackToUser, DIVIDER);
+        showToUser(outFormatter.formatLinesWithDividers(0, 1, result.feedbackToUser));
     }
 
     /**
@@ -142,27 +140,7 @@ public class TextUi {
 
     /** Shows a list of strings to the user, formatted as an indexed list. */
     private void showToUserAsIndexedList(List<String> list) {
-        showToUser(getIndexedListForViewing(list));
-    }
-
-    /** Formats a list of strings as a viewable indexed list. */
-    private static String getIndexedListForViewing(List<String> listItems) {
-        final StringBuilder formatted = new StringBuilder();
-        int displayIndex = 0 + DISPLAYED_INDEX_OFFSET;
-        for (String listItem : listItems) {
-            formatted.append(getIndexedListItem(displayIndex, listItem)).append("\n");
-            displayIndex++;
-        }
-        return formatted.toString();
-    }
-
-    /**
-     * Formats a string as a viewable indexed list item.
-     *
-     * @param visibleIndex visible index for this listing
-     */
-    private static String getIndexedListItem(int visibleIndex, String listItem) {
-        return String.format(MESSAGE_INDEXED_LIST_ITEM, visibleIndex, listItem);
+        showToUser(outFormatter.formatIndexedList(list, 1));
     }
 
 }
