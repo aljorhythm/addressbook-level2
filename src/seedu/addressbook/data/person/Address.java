@@ -9,7 +9,7 @@ import seedu.addressbook.data.exception.IllegalValueException;
 public class Address {
 
     public static final String EXAMPLE = "[block], street, [unit], postal_code";
-    public static final String MESSAGE_ADDRESS_CONSTRAINTS = "Person addresses must be in the format '" + EXAMPLE +"'";
+    public static final String MESSAGE_ADDRESS_CONSTRAINTS = "Person addresses must be in the format '" + EXAMPLE + "'";
     public static final String ADDRESS_VALIDATION_REGEX = "^[^,]*(, [^,]*){3}$";
 
     private boolean isPrivate;
@@ -35,10 +35,15 @@ public class Address {
             throw new IllegalValueException(MESSAGE_ADDRESS_CONSTRAINTS);
         }
         String[] addressParts = address.split(", ");
-        this.block = new Block(addressParts[AddressCSVIndices.BLOCK]);
-        this.street = new Street(addressParts.length > 1 ? addressParts[AddressCSVIndices.STREET] : "");
-        this.unit = new Unit(addressParts.length > 2 ? addressParts[AddressCSVIndices.UNIT] : "");
-        this.postalCode = new PostalCode(addressParts.length > 3 ? addressParts[AddressCSVIndices.POSTAL_CODE] : "");
+        try {
+            this.block = new Block(addressParts[AddressCSVIndices.BLOCK]);
+            this.street = new Street(addressParts.length > 1 ? addressParts[AddressCSVIndices.STREET] : "");
+            this.unit = new Unit(addressParts.length > 2 ? addressParts[AddressCSVIndices.UNIT] : "");
+            this.postalCode = new PostalCode(
+                    addressParts.length > 3 ? addressParts[AddressCSVIndices.POSTAL_CODE] : "");
+        } catch (IllegalValueException e) {
+            throw e;
+        }
     }
 
     /**
@@ -57,7 +62,7 @@ public class Address {
                 postalCode.toString() };
         return String.join(", ", addressParts);
     }
-    
+
     @Override
     public boolean equals(Object other) {
         return other == this // short circuit if same object

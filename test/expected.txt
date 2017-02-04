@@ -303,6 +303,9 @@
 || Enter command: || [Command entered:  add Adam Brown p/111111 e/adam@gmail.com a/111, alpha street, not enough address parts]
 || Person addresses must be in the format '[block], street, [unit], postal_code'
 || ===================================================
+|| Enter command: || [Command entered:  add Adam Brown p/111111 e/adam@gmail.com a/BLOCK 111, alpha street, #05-320, 550327]
+|| Invalid Block 'BLOCK 111' Block format should consist of 1-4 digits and optionally followed by a capital letter
+|| ===================================================
 || Enter command: || [Command entered:  exit]
 || Exiting Address Book as requested ...
 || ===================================================

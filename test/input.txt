@@ -156,6 +156,9 @@
 
   # should fail regex validation of address
   add Adam Brown p/111111 e/adam@gmail.com a/111, alpha street, not enough address parts
+  
+  # should fail regex validation of block
+  add Adam Brown p/111111 e/adam@gmail.com a/BLOCK 111, alpha street, #05-320, 550327
 
 ##########################################################
 # test exit command
