@@ -39,8 +39,8 @@ public class AdaptedPerson {
     /**
      * No-arg constructor for JAXB use.
      */
-    public AdaptedPerson() {}
-
+    public AdaptedPerson() {
+    }
 
     /**
      * Converts a given Person into this class for JAXB use.
@@ -48,19 +48,19 @@ public class AdaptedPerson {
      * @param source future changes to this will not affect the created AdaptedPerson
      */
     public AdaptedPerson(ReadOnlyPerson source) {
-        name = source.getName().fullName;
+        name = source.getName().getFullName();
 
         phone = new AdaptedContactDetail();
         phone.isPrivate = source.getPhone().isPrivate();
-        phone.value = source.getPhone().value;
+        phone.value = source.getPhone().getValue();
 
         email = new AdaptedContactDetail();
         email.isPrivate = source.getEmail().isPrivate();
-        email.value = source.getEmail().value;
+        email.value = source.getEmail().getValue();
 
         address = new AdaptedContactDetail();
         address.isPrivate = source.getAddress().isPrivate();
-        address.value = source.getAddress().value;
+        address.value = source.getAddress().getValue();
 
         tagged = new ArrayList<>();
         for (Tag tag : source.getTags()) {
@@ -83,8 +83,7 @@ public class AdaptedPerson {
             }
         }
         // second call only happens if phone/email/address are all not null
-        return Utils.isAnyNull(name, phone, email, address)
-                || Utils.isAnyNull(phone.value, email.value, address.value);
+        return Utils.isAnyNull(name, phone, email, address) || Utils.isAnyNull(phone.value, email.value, address.value);
     }
 
     /**
