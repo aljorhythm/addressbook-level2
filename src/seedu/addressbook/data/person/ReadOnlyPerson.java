@@ -1,5 +1,7 @@
 package seedu.addressbook.data.person;
 
+import java.util.ArrayList;
+
 import seedu.addressbook.data.tag.Tag;
 import seedu.addressbook.data.tag.UniqueTagList;
 
@@ -7,11 +9,45 @@ import seedu.addressbook.data.tag.UniqueTagList;
  * A read-only immutable interface for a Person in the addressbook.
  * Implementations should guarantee: details are present and not null, field values are validated.
  */
-public interface ReadOnlyPerson {
+public interface ReadOnlyPerson extends Printable {
+    static class PrintableTags implements Printable {
+        private UniqueTagList tags;
+
+        PrintableTags(UniqueTagList tags) {
+            this.setTags(tags);
+        }
+
+        @Override
+        public String getPrintableString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(" Tags: ");
+            for (Tag tag : getTags()) {
+                builder.append(tag);
+            }
+            return builder.toString();
+        }
+
+        /**
+         * @return the tags
+         */
+        public UniqueTagList getTags() {
+            return tags;
+        }
+
+        /**
+         * @param tags the tags to set
+         */
+        public void setTags(UniqueTagList tags) {
+            this.tags = tags;
+        }
+    }
 
     Name getName();
+
     Phone getPhone();
+
     Email getEmail();
+
     Address getAddress();
 
     /**
@@ -20,6 +56,12 @@ public interface ReadOnlyPerson {
      */
     UniqueTagList getTags();
 
+    default Printable[] getReadableContactDetails() {
+        Printable[] printables = { getName(), getPhone(), getEmail(), getAddress(), new PrintableTags(getTags()) };
+        return printables;
+
+    }
+
     /**
      * Returns true if the values inside this object is same as those of the other
      * (Note: interfaces cannot override .equals)
@@ -27,60 +69,37 @@ public interface ReadOnlyPerson {
     default boolean isSameStateAs(ReadOnlyPerson other) {
         return other == this // short circuit if same object
                 || (other != null // this is first to avoid NPE below
-                && other.getName().equals(this.getName()) // state checks here onwards
-                && other.getPhone().equals(this.getPhone())
-                && other.getEmail().equals(this.getEmail())
-                && other.getAddress().equals(this.getAddress()));
+                        && other.getName().equals(this.getName()) // state checks here onwards
+                        && other.getPhone().equals(this.getPhone()) && other.getEmail().equals(this.getEmail())
+                        && other.getAddress().equals(this.getAddress()));
     }
 
     /**
      * Formats the person as text, showing all contact details.
      */
     default String getAsTextShowAll() {
-        final StringBuilder builder = new StringBuilder();
-        final String detailIsPrivate = "(private) ";
-        builder.append(getName())
-                .append(" Phone: ");
-        if (getPhone().isPrivate()) {
-            builder.append(detailIsPrivate);
-        }
-        builder.append(getPhone())
-                .append(" Email: ");
-        if (getEmail().isPrivate()) {
-            builder.append(detailIsPrivate);
-        }
-        builder.append(getEmail())
-                .append(" Address: ");
-        if (getAddress().isPrivate()) {
-            builder.append(detailIsPrivate);
-        }
-        builder.append(getAddress())
-                .append(" Tags: ");
-        for (Tag tag : getTags()) {
-            builder.append(tag);
-        }
-        return builder.toString();
+        return getPrintableString(getReadableContactDetails());
     }
 
     /**
      * Formats a person as text, showing only non-private contact details.
      */
     default String getAsTextHidePrivate() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(getName());
-        if (!getPhone().isPrivate()) {
-            builder.append(" Phone: ").append(getPhone());
+        ArrayList<Printable> notPrivatePrintables = new ArrayList<Printable>();
+        for (Printable contactDetail : getReadableContactDetails()) {
+            if (!(contactDetail instanceof PrivatableContactDetail
+                    && ((PrivatableContactDetail) contactDetail).isPrivate())) {
+                notPrivatePrintables.add(contactDetail);
+            }
         }
-        if (!getEmail().isPrivate()) {
-            builder.append(" Email: ").append(getEmail());
-        }
-        if (!getAddress().isPrivate()) {
-            builder.append(" Address: ").append(getAddress());
-        }
-        builder.append(" Tags: ");
-        for (Tag tag : getTags()) {
-            builder.append(tag);
-        }
-        return builder.toString();
+
+        Printable[] toPrint = new Printable[notPrivatePrintables.size()];
+        toPrint = notPrivatePrintables.toArray(toPrint);
+        return getPrintableString(toPrint);
+    }
+
+    @Override
+    public default String getPrintableString() {
+        return getAsTextShowAll();
     }
 }
