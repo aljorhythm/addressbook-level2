@@ -1,15 +1,20 @@
 package seedu.addressbook.data;
 
-import seedu.addressbook.data.person.*;
-import seedu.addressbook.data.person.UniquePersonList.*;
-import seedu.addressbook.data.tag.UniqueTagList;
-import seedu.addressbook.data.tag.UniqueTagList.*;
-import seedu.addressbook.data.tag.Tag;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import seedu.addressbook.data.person.Person;
+import seedu.addressbook.data.person.ReadOnlyPerson;
+import seedu.addressbook.data.person.UniquePersonList;
+import seedu.addressbook.data.person.UniquePersonList.DuplicatePersonException;
+import seedu.addressbook.data.person.UniquePersonList.PersonNotFoundException;
+import seedu.addressbook.data.tag.Tag;
+import seedu.addressbook.data.tag.UniqueTagList;
+import seedu.addressbook.data.tag.UniqueTagList.DuplicateTagException;
+import seedu.addressbook.data.tag.UniqueTagList.TagNotFoundException;
 
 /**
  * Represents the entire address book. Contains the data of the address book.
@@ -19,7 +24,7 @@ import java.util.Set;
  *  - The tags in each person point to tag objects in the master list. (== equality)
  */
 public class AddressBook {
-
+    public final ArrayList<Tagging> taggings = new ArrayList<Tagging>();
     private final UniquePersonList allPersons;
     private final UniqueTagList allTags; // can contain tags not attached to any person
 
