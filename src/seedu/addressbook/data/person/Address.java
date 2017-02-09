@@ -25,4 +25,9 @@ public class Address extends PrivatableContactDetail {
     String getValidationRegex() {
         return ADDRESS_VALIDATION_REGEX;
     }
+
+    @Override
+    public String getPrintableStringPrefix() {
+        return " Address: ";
+    }
 }

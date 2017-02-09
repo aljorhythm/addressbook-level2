@@ -27,4 +27,9 @@ public class Phone extends PrivatableContactDetail {
         // TODO Auto-generated method stub
         return PHONE_VALIDATION_REGEX;
     }
+
+    @Override
+    public String getPrintableStringPrefix() {
+        return " Phone: ";
+    }
 }

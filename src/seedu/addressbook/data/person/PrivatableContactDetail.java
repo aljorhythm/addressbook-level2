@@ -18,4 +18,8 @@ public abstract class PrivatableContactDetail extends ContactDetail {
     public boolean isPrivate() {
         return isPrivate;
     }
+
+    public String getPrintableString() {
+        return getPrintableStringPrefix() + (isPrivate() ? "(private) " : "") + this;
+    }
 }

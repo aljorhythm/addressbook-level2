@@ -6,7 +6,7 @@ import seedu.addressbook.data.exception.IllegalValueException;
  * Represents a person's contact detail
  * Guarantees: immutable; is valid as declared in {@link #isValid(String)}
  */
-public abstract class ContactDetail {
+public abstract class ContactDetail implements Printable {
     /**
      * 
      */
@@ -26,16 +26,6 @@ public abstract class ContactDetail {
 
     public void printClass() {
         System.out.print(this.getClass());
-    }
-
-    public static void main(String[] args) {
-        try {
-            new Email("valid@e.mail", false).printClass();
-            ;
-        } catch (IllegalValueException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -81,4 +71,10 @@ public abstract class ContactDetail {
                 || (other.getClass().equals(this.getClass()) // instanceof handles nulls
                         && this.getValue().equals(((ContactDetail) other).getValue())); // state check
     }
+
+    /**
+     * 
+     * String to be prefixed to toString() for printing
+     */
+    public abstract String getPrintableStringPrefix();
 }

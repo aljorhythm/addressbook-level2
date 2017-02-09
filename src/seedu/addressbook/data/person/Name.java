@@ -45,4 +45,15 @@ public class Name extends ContactDetail {
         return fullName;
     }
 
+    @Override
+    public String getPrintableString() {
+        // TODO Auto-generated method stub
+        return getFullName();
+    }
+
+    @Override
+    public String getPrintableStringPrefix() {
+        return "";
+    }
+
 }

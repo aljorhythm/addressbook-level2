@@ -25,4 +25,9 @@ public class Email extends PrivatableContactDetail {
     String getValidationRegex() {
         return EMAIL_VALIDATION_REGEX;
     }
+
+    @Override
+    public String getPrintableStringPrefix() {
+        return " Email: ";
+    }
 }
